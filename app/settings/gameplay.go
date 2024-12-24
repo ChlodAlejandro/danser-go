@@ -234,6 +234,7 @@ func initGameplay() *gameplay {
 		HUDFont:                 "",
 		ShowResultsScreen:       true,
 		ResultsScreenTime:       5,
+		FadeOutEnding:           true,
 		ResultsUseLocalTimeZone: false,
 		ShowWarningArrows:       true,
 		ShowHitLighting:         false,
@@ -263,6 +264,7 @@ type gameplay struct {
 	HUDFont                 string  `label:"Overlay (HUD) font" file:"Select HUD font" filter:"TrueType/OpenType Font (*.ttf, *.otf)|ttf,otf" tooltip:"Sets the font that will be used for PP/UR/hit counts" liveedit:"false"`
 	ShowResultsScreen       bool    `liveedit:"false"`
 	ResultsScreenTime       float64 `label:"Results screen duration" min:"1" max:"20" format:"%.1fs" liveedit:"false"`
+	FadeOutEnding           bool    `label:"Fade out the ending of the results screen (does not affect audio)" liveedit:"false"`
 	ResultsUseLocalTimeZone bool    `label:"Show PC's time zone instead of UTC"`
 	ShowWarningArrows       bool
 	ShowHitLighting         bool
