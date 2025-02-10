@@ -402,6 +402,7 @@ func NewPlayer(beatMap *beatmap.BeatMap) *Player {
 	player.fxGlider.AddEvent(beatmapStart, beatmapStart+1000, bmath.Normal)
 
 	fadeOut := settings.Playfield.FadeOutTime * 1000
+	endingPad := settings.Playfield.EndingPad * 1000
 
 	if s, ok := player.overlay.(*overlays.ScoreOverlay); ok {
 		if settings.Gameplay.ShowResultsScreen {
@@ -409,7 +410,7 @@ func NewPlayer(beatMap *beatmap.BeatMap) *Player {
 			fadeOut = 250
 		}
 
-		s.SetBeatmapEnd(beatmapEnd + fadeOut)
+		s.SetBeatmapEnd(beatmapEnd + endingPad + fadeOut)
 	}
 
 	if !math.IsInf(settings.END, 1) {
@@ -426,27 +427,35 @@ func NewPlayer(beatMap *beatmap.BeatMap) *Player {
 		}
 	}
 
-	player.dimGlider.AddEventV(beatmapEnd, beatmapEnd+fadeOut, 0.0, bmath.Absolute)
-	player.fxGlider.AddEventV(beatmapEnd, beatmapEnd+fadeOut, 0.0, bmath.Absolute)
-	player.cursorGlider.AddEvent(beatmapEnd, beatmapEnd+fadeOut, 0.0)
-	player.hudGlider.AddEvent(beatmapEnd, beatmapEnd+fadeOut, 0.0)
+	if endingPad > 0 {
+		player.dimGlider.AddEventV(beatmapEnd, beatmapEnd+1000, 1.0, bmath.Absolute)
+		player.cursorGlider.AddEvent(beatmapEnd, beatmapEnd+1000, 0.0)
+		player.fxGlider.AddEventV(beatmapEnd, beatmapEnd+1000, 0.0, bmath.Absolute)
+		player.hudGlider.AddEvent(beatmapEnd, beatmapEnd+1000, 0.0)
+	} else {
+		player.cursorGlider.AddEvent(beatmapEnd, beatmapEnd+fadeOut, 0.0)
+		player.fxGlider.AddEventV(beatmapEnd, beatmapEnd+fadeOut, 0.0, bmath.Absolute)
+		player.hudGlider.AddEvent(beatmapEnd, beatmapEnd+fadeOut, 0.0)
+	}
 
-	player.mapEndL = beatmapEnd + fadeOut
-	player.MapEnd = beatmapEnd + fadeOut
+	player.dimGlider.AddEventV(beatmapEnd+endingPad, beatmapEnd+endingPad+fadeOut, 0.0, bmath.Absolute)
+
+	player.mapEndL = (beatmapEnd) + fadeOut
+	player.MapEnd = (beatmapEnd) + fadeOut
 
 	if _, ok := player.overlay.(*overlays.ScoreOverlay); ok && settings.Gameplay.ShowResultsScreen {
-		player.speedGlider.AddEvent(beatmapEnd+fadeOut, beatmapEnd+fadeOut, 0)
-		player.pitchGlider.AddEvent(beatmapEnd+fadeOut, beatmapEnd+fadeOut, 0)
+		player.speedGlider.AddEvent(beatmapEnd+endingPad+fadeOut, beatmapEnd+endingPad+fadeOut, 0)
+		player.pitchGlider.AddEvent(beatmapEnd+endingPad+fadeOut, beatmapEnd+endingPad+fadeOut, 0)
 
 		player.MapEnd += (settings.Gameplay.ResultsScreenTime + 1) * 1000
 		if player.MapEnd < player.musicPlayer.GetLength()*1000 {
 			player.volumeGlider.AddEvent(player.MapEnd-settings.Gameplay.ResultsScreenTime*1000-500, player.MapEnd, 0.0)
 		}
 	} else {
-		player.volumeGlider.AddEvent(beatmapEnd, beatmapEnd+fadeOut, 0.0)
+		player.volumeGlider.AddEvent(beatmapEnd+endingPad, beatmapEnd+endingPad+fadeOut, 0.0)
 	}
 
-	player.MapEnd += 100
+	player.MapEnd += 100 + endingPad
 
 	// See https://github.com/Wieku/danser-go/issues/121
 	player.musicPlayer.AddSilence(max(0, player.MapEnd/1000-player.musicPlayer.GetLength()))

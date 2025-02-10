@@ -15,6 +15,7 @@ func initPlayfield() *playfield {
 		LeadInTime:                   5,
 		LeadInHold:                   2,
 		FadeOutTime:                  5,
+		EndingPad:                    0,
 		SeizureWarning: &seizure{
 			Enabled:  true,
 			Duration: 5,
@@ -84,6 +85,7 @@ type playfield struct {
 	LeadInTime                   float64  `max:"10" format:"%.1fs" liveedit:"false"` //5
 	LeadInHold                   float64  `max:"10" format:"%.1fs" liveedit:"false"` //2
 	FadeOutTime                  float64  `max:"10" format:"%.1fs" liveedit:"false"` //5
+	EndingPad                    float64  `max:"10" format:"%.1fs" liveedit:"false"` //0
 	SeizureWarning               *seizure `liveedit:"false"`
 	Background                   *background
 	Logo                         *logo
